@@ -1,6 +1,6 @@
 import numpy as np
 import cv2 as cv2
-
+ 
 def main():  
     print('Reading image...')
     # Read in the image.
