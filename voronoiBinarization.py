@@ -10,27 +10,9 @@ def main():
     surfSubdiv2 = getSurfSubdiv2(gray)
     surfVoronoi = drawVoronoi(gray, surfSubdiv2)
     
-    """
-    #Generate FAST image
-    fastSubdiv2 = getFastSubdiv2(img)
-    fastVoronoi = drawVoronoi(img, fastSubdiv2)
-    
-    #Generate BRIEF image
-    briefSubdiv2 = getBRIEFSubdiv2(img)
-    briefVoronoi = drawVoronoi(img, briefSubdiv2)
-    
-    #Generate BRIEF image
-    orbSubdiv2 = getORBSubdiv2(img)
-    orbVoronoi = drawVoronoi(img, orbSubdiv2)
-    """
-    
     print('Finished drawing voronoi...')
     cv2.imwrite('gray.jpg',gray)
     cv2.imwrite('SURF.jpg',surfVoronoi)
-    #cv2.imwrite('FAST.jpg',fastVoronoi)
-    #cv2.imwrite('BRIEF.jpg',briefVoronoi)
-    #cv2.imwrite('ORB.jpg',orbVoronoi)
-
 
 def drawVoronoi(img, subdiv): 
     voronoi = np.zeros(img.shape, dtype = img.dtype)
@@ -57,14 +39,11 @@ def drawVoronoi(img, subdiv):
         
         #Apply binarization for each polygon
         ret, ad_th1 = cv2.threshold(newPoly,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        #ad_th1 = cv2.adaptiveThreshold(newPoly,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,3,2)
         #Add each computed polygon to the final image
         binPoly = cv2.add(binPoly,ad_th1)
         cv2.imwrite('ad_th1.jpg',ad_th1)
         # Fill polygon with average color
         intFacet = np.array(facetArray, np.int)
-
-        #cv2.fillConvexPoly(voronoi, intFacet, color);
         
         # Draw lines around polygon
         polyFacets = np.array([intFacet])
@@ -73,8 +52,6 @@ def drawVoronoi(img, subdiv):
     #Final image
     cv2.imwrite('binPoly.jpg',binPoly)
     return voronoi
-    
-    
 
 def getSurfSubdiv2(img):
     # Set Hessian Threshold value
@@ -106,56 +83,6 @@ def getSurfSubdiv2(img):
     for p in points :
         subdiv.insert(p)
         
-    return subdiv
-
-def getFastSubdiv2(img): 
-    fast = cv2.FastFeatureDetector_create()
-    kp = fast.detect(img, 1000)
-    keyPoints = cv2.KeyPoint_convert(kp)
-    points = []
-    for keyPoint in keyPoints: 
-        points.append((keyPoint[0], keyPoint[1]))
-    
-    size = img.shape
-    subdiv2DShape = (0, 0, size[1], size[0])
-    subdiv = cv2.Subdiv2D(subdiv2DShape);
-    for p in points :
-        subdiv.insert(p)
-    
-    return subdiv
-
-def getBRIEFSubdiv2(img): 
-    star = cv2.xfeatures2d.StarDetector_create()
-    brief = cv2.xfeatures2d.BriefDescriptorExtractor_create()
-    kp = star.detect(img,None)
-    kp, des = brief.compute(img, kp)
-    keyPoints = cv2.KeyPoint_convert(kp)
-    points = []
-    for keyPoint in keyPoints: 
-        points.append((keyPoint[0], keyPoint[1]))
-    
-    size = img.shape
-    subdiv2DShape = (0, 0, size[1], size[0])
-    subdiv = cv2.Subdiv2D(subdiv2DShape);
-    for p in points :
-        subdiv.insert(p)
-    
-    return subdiv
-
-def getORBSubdiv2(img): 
-    orb = cv2.ORB_create(1000)
-    kp = orb.detect(img,None)
-    keyPoints = cv2.KeyPoint_convert(kp)
-    points = []
-    for keyPoint in keyPoints: 
-        points.append((keyPoint[0], keyPoint[1]))
-    
-    size = img.shape
-    subdiv2DShape = (0, 0, size[1], size[0])
-    subdiv = cv2.Subdiv2D(subdiv2DShape);
-    for p in points :
-        subdiv.insert(p)
-    
     return subdiv
 
 if __name__ == '__main__':
