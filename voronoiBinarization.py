@@ -82,7 +82,7 @@ def getSurfSubdiv2(img):
     subdiv = cv2.Subdiv2D(subdiv2DShape);
     for p in points :
         subdiv.insert(p)
-        
+         
     return subdiv
 
 if __name__ == '__main__':
